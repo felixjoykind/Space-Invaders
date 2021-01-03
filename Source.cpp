@@ -59,7 +59,7 @@ public:
 			if (running)
 			{
 				if (GetKey(olc::Key::UP).bPressed)
-					tryShoot(player->canShoot);
+					tryShoot();
 				if (GetKey(olc::Key::RIGHT).bHeld)
 				{
 					if (player->GetX() + player->GetWidth() < ScreenWidth())
@@ -99,18 +99,19 @@ public:
 				//std::cout << invader.GetX() << ", " << invader.GetY() << std::endl;
 			}
 
-		// choosing random enemy to shoot
-		Invader invader(0, 0, 0, 0);
-		do
-		{
-			int y = rand() % invaders.size();		// <--| getting random invader
-			int x = rand() % invaders[y].size();	// <--|
-
-			invader = invaders[y][x]; // random invader
-		} while (!invader.isAlive);
 
 		if (canInvadersShoot)
 		{
+			// choosing random enemy to shoot
+			Invader invader(0, 0, 0, 0);
+			do
+			{
+				int y = rand() % invaders.size();		// <--| getting random invader
+				int x = rand() % invaders[y].size();	// <--|
+
+				invader = invaders[y][x]; // random invader
+			} while (!invader.isAlive);
+
 			bullets.push_back(Bullet(invader.GetX() + invader.GetWidth() / 2, invader.GetY() + invader.GetHeight() / 2, 1, 5,
 				Shooter::Invader, BulletColor{ 0, 255, 0 }));
 			canInvadersShoot = false;
@@ -301,20 +302,15 @@ private:
 		movingLeft = !movingLeft;
 	}
 
-	void tryShoot(bool canShoot)
+	void tryShoot()
 	{
-		if (canShoot)
+		if (player->canShoot)
 		{
 			std::cout << "SHOOT" << std::endl;
 			bullets.push_back(Bullet(player->GetX() + 7, player->GetY() - 3, 1, 5,
 				Shooter::Player, BulletColor{ 255, 0, 0 }));
 			player->canShoot = false;
 		}
-	}
-
-	void Boom(float x, float y)
-	{
-
 	}
 
 	int GetInvadersCount()
